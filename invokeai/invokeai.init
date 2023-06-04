@@ -1,0 +1,21 @@
+# InvokeAI initialization file
+# This is the InvokeAI initialization file, which contains command-line default values.
+# Feel free to edit. If anything goes wrong, you can re-initialize this file by deleting
+# or renaming it and then running invokeai-configure again.
+# Place  frequently-used startup commands here, one or more per line.
+# Examples:
+# --outdir=D:\data\images
+# --no-nsfw_checker
+# --web --host=0.0.0.0
+# --steps=20
+# -Ak_euler_a -C10.0
+
+--outdir="/home/sj/Projects/be-my-story-ai/invokeai/outputs"
+--embedding_path="/home/sj/Projects/be-my-story-ai/invokeai/embeddings"
+--precision=auto
+--max_loaded_models=2
+--nsfw_checker
+--xformers
+--ckpt_convert
+
+
