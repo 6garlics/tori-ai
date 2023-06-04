@@ -164,3 +164,7 @@ cython_debug/
 *.jpg
 
 InvokeAI-Installer
+invokeai/embeddings/*
+invokeai/models/*
+invokeai/text-inversion-output/*
+invokeai/text-inversion-training-data/*
