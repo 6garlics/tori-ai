@@ -1,6 +1,24 @@
 # be-my-story-ai
 
-- Development Environment
+세상에 없던 나만의 동화책 **Be My Story**의 AI 개발을 위한 레파지토리입니다.  
+**Be My Story**는 아동이 일기를 작성하면 생성형 AI를 통해 만들어진 e-동화책을 친구들과 공유해 볼 수 있는 플랫폼입니다.
+
+## :white_check_mark: To Do List
+
+- [ ] 일관된 주인공 생성, 통일된 화풍 구현
+    - [X] Fine-tune Stable Diffusion using Textual Inversion  
+    - [ ] Fine-tune Stable Diffusion using LoRA
+    - [ ] StyleGAN + FreezeD
+- [ ] 딥러닝 서버 만들기
+- [ ] ChatGPT API 연결
+- [ ] 일기를 동화로 변환할 때, 풍부한 이야기가 되도록 프롬프트 설정  
+
+## :pencil2: Contents
+
+> [학습 이미지 데이터 만들기](#학습-이미지-데이터-만들기)  
+> [Fine-tune Stable Diffusion using Texture Inversio](#fine-tune-stable-diffusion-using-texture-inversion)
+
+## :computer: Development Environment
     - CPU i7-770HQ, RAM 16GB  
     - GeForce GTX 1060 Mobile (VRAM 6GB)
     - Ubuntu 20.04  
@@ -8,7 +26,7 @@
     - CUDA 11.7  
     - Cudnn 8.6.0
 
-## 학습 이미지 데이터 만들기
+## :woman_technologist: 학습 이미지 데이터 만들기
 ### Settings
 
 ```bash
@@ -36,7 +54,7 @@ python utils/resize.py -k ${KEYWORD}
 ```
 
 
-## Fine-tune Stable Diffusion using Texture Inversion
+## :woman_technologist: Fine-tune Stable Diffusion using Texture Inversion
 
 ### Settings
 1. python, 추가 라이브러리 설치
@@ -85,7 +103,7 @@ bash invoke.sh
     - Learning Rate Schduler: constant
     - Use xformers acceleration
 
-## Inference
+### Inference
 
 ```bash
 bash invoke.sh
