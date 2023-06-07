@@ -3,9 +3,13 @@ from PIL import Image
 import glob
 import os
 from tqdm import tqdm
+import argparse
 
-keyword = input('작품 : ')
-# keyword = 'ponyo'
+parser = argparse.ArgumentParser()
+parser.add_argument('--key', '-k', required=True, help='작품 키워드')
+args = parser.parse_args()
+
+keyword = args.key
 S = 512
 size = (S, S)
 
