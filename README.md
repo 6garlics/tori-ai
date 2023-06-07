@@ -16,7 +16,7 @@
 ## :pencil2: Contents
 
 > [학습 이미지 데이터 만들기](#학습-이미지-데이터-만들기)  
-> [Fine-tune Stable Diffusion using Texture Inversio](#fine-tune-stable-diffusion-using-texture-inversion)
+> [Fine-tune Stable Diffusion using Texture Inversion](#fine-tune-stable-diffusion-using-texture-inversion)
 
 ## :computer: Development Environment
     - CPU i7-770HQ, RAM 16GB  
