@@ -6,20 +6,20 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from time import sleep
 from bs4 import BeautifulSoup
+import argparse
 
 # 크롬 드라이버 설정
 # (크롤링할 때 웹 페이지 띄우지 않음, gpu 사용 안함, 한글 지원, user-agent 헤더 추가)
 def set_chrome_driver():
     chrome_options = webdriver.ChromeOptions()
-    # chrome_options.add_argument('headless')
-    # chrome_options.add_argument('--disable-gpu')
-    # chrome_options.add_argument('lang=ko_KR')
-    # chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36")
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
     return driver
 
-keyword = input('작품 : ')
-# keyword = 'ponyo'
+parser = argparse.ArgumentParser()
+parser.add_argument('--key', '-k', required=True, help='작품 키워드')
+args = parser.parse_args()
+
+keyword = args.key
 max_images = 50
 
 # 프로젝트에 미리 생성해놓은 crawled_img폴더 안에 하위 폴더 생성
