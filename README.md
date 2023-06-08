@@ -16,7 +16,7 @@
 ## :pencil2: Contents
 
 > [학습 이미지 데이터 만들기](#woman_technologist-학습-이미지-데이터-만들기)  
-> [Fine-tune Stable Diffusion using Texture Inversion](#woman_technologist-fine-tune-stable-diffusion-using-texture-inversion)
+> [Fine-tune Stable Diffusion using Texture Inversion](#woman_technologist-fine-tune-stable-diffusion-using-texture-inversion)  
 > [Inference Stable Diffusion with embeddings](#woman_technologist-inference-stable-diffusion-with-embeddings)
 
 ## :computer: Development Environment
