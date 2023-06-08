@@ -126,8 +126,9 @@ python utils/resize.py -k ${KEYWORD}
 
 ### Method 2. Colab 이용
 
-1. 해당 레포지토리의 `textual_inversion/inference` 디렉토리를 드라이브에 업로드
-2. `inference_stable_diffusion_with_embeddings.ipynb` 실행
-3. `textual_inversion/outputs` 디렉토리 아래에 생성된 이미지 확인
+1. 해당 레포지토리의 `textual_inversion/inference` 디렉토리를 구글 드라이브에 업로드
+2. [구글 공유 드라이브](https://drive.google.com/drive/folders/1j8NN3yn6BziBPT_h-OYD5H48ao4MoqKt?usp=sharing)에서 pretrained model과  embedding 다운 후, 각각 `textual_inversion/models/ldm/stable-diffusion-v1/model.ckpt`, `textual_inversion/embeddings/${KEYWORD}/learned_embeds.bin`에 위치시키기
+3. `inference_stable_diffusion_with_embeddings.ipynb` 실행
+4. `textual_inversion/outputs` 디렉토리 아래에 생성된 이미지 확인
 
 
