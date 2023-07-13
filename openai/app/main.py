@@ -45,8 +45,8 @@ def diary_to_story(diary: Diary):
             {"role": "system", "content": f"""The user will provide you with text delimited by triple quotes. \
             Please change this diary into a story of {genre_mapping.get(diary.story_type, "판타지")} genre \
             so that it is suitable for children to read and interesting to develop. \
-            A fairy tale should have no more than four paragraphs and please write it in Korean using honorifics. \
-            The main character of this story is a girl Jenny"""},
+            The main character of this story is a girl Jenny. \
+            A fairy tale should have no more than four paragraphs and please write it in Korean using honorifics."""},
             {"role": "user", "content": '"""' + diary.contents +'"""'},
         ],
         temperature=0.75,
@@ -81,7 +81,7 @@ def paragraph_to_prompt(paragraph: str):
 def prompt_to_image(prompt: str, style: Optional[str] = "digital art"):
     # print("style:", style)
     response = openai.Image.create(
-        prompt=prompt + ", in the style of " + style,
+        prompt=prompt + ", " + style,
         n=1,
         size="1024x1024"
     )
