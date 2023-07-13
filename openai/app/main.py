@@ -59,7 +59,9 @@ def paragraph_to_prompt(paragraph: str):
         model=MODEL,
         messages=[
             {"role": "system", "content": "The user will provide you with text delimited by triple quotes. \
-             Please convert this text into a prompt for the DALL·E model that expresses this the situation of text well. the prompt should consist of only one simple sentence."},
+             Please convert this text into a prompt \
+             that expresses the situation of the text well for the DALL·E model \
+             and consists of only one simple sentence and be written in English."},
             {"role": "user", "content": '"""' + paragraph +'"""'},
         ],
         temperature=0.3,
@@ -103,7 +105,7 @@ def create_subject(story: str, story_type: str):
     # return "new subject"
 
 def prompt_to_one_sentence(prompt: str):
-    prompt = prompt.split('.')[0]
+    prompt = prompt.split('.')[0] + "."
     return prompt
 
 @app.post("/storybook")
