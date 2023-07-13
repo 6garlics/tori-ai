@@ -213,3 +213,6 @@ Temporary Items
 # model
 *.bin
 *.ckpt
+
+secrets.json
+*.zip
