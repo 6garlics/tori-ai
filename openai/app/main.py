@@ -24,26 +24,42 @@ genre_mapping = {"모험": 'adventure',
                 }
   
 class Diary(BaseModel):
-    id: Optional[int] = 0
-    subject: Optional[str] = "" # Optional value
+    title: Optional[str] = ""
     contents: Optional[str] = ""
-    story_type: Optional[str] = ""
-    date: Optional[str] = "2023-07-00"
+    genre: Optional[str] = ""
+class StoryText(BaseModel):
+    title: str = ""
+    texts: List[str] = []
 
-class Storybook(BaseModel):
-    subject: str = ""
-    paragraphs: List[str] = []
-    img_urls: List[str] = []
-    story_type: Optional[str] = ""
-    date: str = ""
-    
-# 동화 생성 프롬프트 설정 코드
-def diary_to_story(diary: Diary):
+class Cover(BaseModel):
+    coverUrl: str = ""
+
+class Paragraph(BaseModel):
+    text: str = ""
+class Illustration(BaseModel):
+    imgUrl: str = ""
+
+def create_title(story: str, genre: str):
     response = openai.ChatCompletion.create(
         model=MODEL,
         messages=[
             {"role": "system", "content": f"""The user will provide you with text delimited by triple quotes. \
-            Please change this diary into a story of {genre_mapping.get(diary.story_type, "판타지")} genre \
+             Please make a creative title that expresses the whole story \
+             and {genre_mapping.get(genre, "판타지")} genre well in Korean."""},
+            {"role": "user", "content": '"""' + story +'"""'},
+        ],
+        temperature=0.7,
+    )
+    return response["choices"][0]["message"]["content"].strip("\"")
+
+# 동화 생성 프롬프트 설정 코드
+@app.post("/diaryToStory")
+async def diary_to_story(diary: Diary):
+    response = openai.ChatCompletion.create(
+        model=MODEL,
+        messages=[
+            {"role": "system", "content": f"""The user will provide you with text delimited by triple quotes. \
+            Please change this diary into a story of {genre_mapping.get(diary.genre, "판타지")} genre \
             so that it is suitable for children to read and interesting to develop. \
             The main character of this story is a girl Jenny. \
             A fairy tale should have no more than four paragraphs and please write it in Korean using honorifics."""},
@@ -51,23 +67,14 @@ def diary_to_story(diary: Diary):
         ],
         temperature=0.75,
     )
-    return response["choices"][0]["message"]["content"] # story
+    story = response["choices"][0]["message"]["content"] # story
+    title = create_title(story, diary.genre) # COVER
+    texts = story.strip("\"").split("\n\n")
+    return StoryText(title=title, texts=texts)
 
-# 각 문단별로 이미지 생성 프롬프트로 변환
-def paragraph_to_prompt(paragraph: str):
-    response = openai.ChatCompletion.create(
-        model=MODEL,
-        messages=[
-            {"role": "system", "content": "The user will provide you with text delimited by triple quotes. \
-             Please convert this text into a prompt \
-             that expresses the situation of the text well for the DALL·E model \
-             and consists of only one simple sentence and be written in English."},
-            {"role": "user", "content": '"""' + paragraph +'"""'},
-        ],
-        temperature=0.3,
-    )
-    return response["choices"][0]["message"]["content"] # prompt
-    
+
+######################
+
 # def change_prompt_character(prompt: str):
 #     response = openai.ChatCompletion.create(
 #         model=MODEL,
@@ -81,7 +88,6 @@ def paragraph_to_prompt(paragraph: str):
 #     return response["choices"][0]["message"]["content"] # prompt
 
 def prompt_to_image(prompt: str, style: Optional[str] = "digital art"):
-    # print("style:", style)
     response = openai.Image.create(
         prompt=prompt + ", " + style,
         n=1,
@@ -90,47 +96,41 @@ def prompt_to_image(prompt: str, style: Optional[str] = "digital art"):
     image_url = response['data'][0]['url']
     return image_url
 
-def create_subject(story: str, story_type: str):
+# 각 문단별로 이미지 생성 프롬프트로 변환
+def text_to_prompt(text: str):
     response = openai.ChatCompletion.create(
         model=MODEL,
         messages=[
-            {"role": "system", "content": f"""The user will provide you with text delimited by triple quotes. \
-             Please make a creative title that expresses the whole story \
-             and {genre_mapping.get(story_type, "판타지")} genre well in Korean."""},
-            {"role": "user", "content": '"""' + story +'"""'},
+            {"role": "system", "content": "The user will provide you with text delimited by triple quotes. \
+             Please convert this text into a prompt \
+             that expresses the situation of the text well for the DALL·E model \
+             and consists of only one simple sentence and be written in English."},
+            {"role": "user", "content": '"""' + text +'"""'},
         ],
-        temperature=0.7,
+        temperature=0.3,
     )
     return response["choices"][0]["message"]["content"] # prompt
-    # return "new subject"
-
+    
 def prompt_to_one_sentence(prompt: str):
     prompt = prompt.split('.')[0] + "."
     return prompt
 
-@app.post("/storybook")
-async def diary_to_storybook(diary: Diary):
-    story = diary_to_story(diary)
-    paragraphs = story.strip("\"").split("\n\n")
-    subject = create_subject(story, diary.story_type)
+@app.post("/textToImage")
+async def text_to_image(paragraph: Paragraph):
+    prompt = text_to_prompt(paragraph.text).strip("\"")
+    prompt = prompt_to_one_sentence(prompt)
+    img_url = prompt_to_image(prompt)
+    return Illustration(imgUrl=img_url)
 
-    img_urls = []
-    for paragraph in paragraphs:
-        # print("paragraph: ", paragraph)
-        prompt = paragraph_to_prompt(paragraph).strip("\"")
-        # print("prompt 1: ", prompt)
-        # prompt = change_prompt_character(prompt).strip("\"")
-        # print("prompt 2: ", prompt)
-        prompt = prompt_to_one_sentence(prompt)
-        # print("prompt 2: ", prompt)
+@app.post("/cover")
+async def create_cover(story_text: StoryText):
 
-        img_url = prompt_to_image(prompt)
-        img_urls.append(img_url)
-    
-    storybook = {"subject": subject,
-                 "paragraphs": paragraphs, 
-                 "img_urls": img_urls,
-                 "story_type": diary.story_type,
-                 "date": diary.date, 
-                 }
-    return Storybook(**storybook)
+    whole_text = f"title: {story_text.title}\n" + "\n".join(story_text.texts)
+    # print("whole text:", whole_text)
+    prompt = text_to_prompt(whole_text)
+    # print("prompt 1:", prompt)
+    prompt = prompt_to_one_sentence(prompt)
+    # print("prompt 2:", prompt)
+    cover_url = prompt_to_image(prompt)
+    # print("cover url:", cover_url)
+    return Cover(coverUrl=cover_url)
