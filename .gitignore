@@ -216,3 +216,6 @@ Temporary Items
 
 secrets.json
 *.zip
+
+legacy
+legacy/*
