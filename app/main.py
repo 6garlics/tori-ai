@@ -33,6 +33,14 @@ s3_client = boto3.client(
     aws_access_key_id=ACCESS_KEY,
     aws_secret_access_key=SECRET_KEY
     )
+
+model = MusicGen.get_pretrained('facebook/musicgen-small')
+model.set_generation_params(
+    use_sampling=True,
+    top_k=250,
+    duration=30 # default 30
+)
+
 origins = [
     FRONTEND_URL,
     S3_URL
@@ -82,8 +90,14 @@ class StoryTitleText(BaseModel):
     title: str = ""
     texts: List[str] = []
     
+class StoryText(BaseModel):
+    texts: List[str] = []
+
 class Cover(BaseModel):
     coverUrl: str = ""
+    
+class Music(BaseModel):
+    musicUrl: str = ""
 
 class Paragraph(BaseModel):
     text: str = "" 
@@ -169,7 +183,7 @@ def prompt_to_image(prompt: str, style: Optional[str] = "digital art"):
     return image_url
 
 # 각 문단별로 이미지 생성 프롬프트로 변환
-def text_to_prompt(text: str):
+def text_to_image_prompt(text: str):
     response = openai.ChatCompletion.create(
         model=MODEL,
         messages=[
@@ -187,17 +201,78 @@ def prompt_to_one_sentence(prompt: str):
     prompt = prompt.split('.')[0] + "."
     return prompt
 
+def story_to_music_prompt(story):
+    response = openai.ChatCompletion.create(
+        model=MODEL,
+        messages=[
+            {"role": "system", "content": "The user will provide you with text delimited by triple quotes. \
+            Please convert this text into a prompt \
+            which composes music that explains and expresses the overall atmosphere and message of the text well \
+            and contains which instruments to use, musical genre and rhythm. \
+            The prompt should consist of only one simple sentence and be written in English."},
+            {"role": "user", "content": '"""' + story +'"""'},
+        ],
+        temperature=0.75,
+        max_tokens=2048
+    )
+    return response["choices"][0]["message"]["content"] # prompt
+
+def prompt_to_music(prompt, sample_rate=32000):
+    object_name = str(uuid.uuid1()) + '.wav'
+    
+    with torch.no_grad():
+        # wav 생성
+        outputs = model.generate(
+            descriptions=[
+                prompt
+            ],
+            progress=True, return_tokens=True
+        )
+        wav = outputs[0][0].detach().cpu().float()
+        
+        assert wav.dtype.is_floating_point, "wav is not floating point"
+        if wav.dim() == 1:
+            wav = wav[None]
+        elif wav.dim() > 2:
+            raise ValueError("Input wav should be at most 2 dimension.")
+        assert wav.isfinite().all()
+        
+        # s3에 저장
+        with NamedTemporaryFile("wb", suffix=".wav", delete=False) as file:
+            torchaudio.save(file.name, wav, sample_rate=sample_rate, format='wav')
+            try:
+                s3_client.upload_file(
+                    file.name,
+                    BUCKET_NAME,
+                    object_name
+                )
+            except ClientError as e:
+                return None
+    
+    del outputs, wav
+    torch.cuda.empty_cache()
+    
+    music_url = f"{S3_URL}/{object_name}"
+    return music_url
+
+@app.post("/music")
+async def story_to_music(story_text: StoryText):
+    texts = "\n".join(story_text.texts)
+    prompt = story_to_music_prompt(texts)
+    music_url = prompt_to_music(prompt)
+    return Music(musicUrl=music_url)
+
 @app.post("/textToImage/{pageNum}")
 async def text_to_image(pageNum: int, paragraph: Paragraph):
-    prompt = text_to_prompt(paragraph.text).strip("\"")
+    prompt = text_to_image_prompt(paragraph.text).strip("\"")
     prompt = prompt_to_one_sentence(prompt)
     img_url = prompt_to_image(prompt)
     return Illustration(imgUrl=img_url, pageNum=pageNum)
 
 @app.post("/cover")
-async def create_cover(story_text: StoryText):
-    whole_text = f"title: {story_text.title}\n" + "\n".join(story_text.texts)
-    prompt = text_to_prompt(whole_text)
+async def create_cover(story_title_text: StoryTitleText):
+    whole_text = f"title: {story_title_text.title}\n" + "\n".join(story_title_text.texts)
+    prompt = text_to_image_prompt(whole_text)
     prompt = prompt_to_one_sentence(prompt)
     cover_url = prompt_to_image(prompt)
     return Cover(coverUrl=cover_url)
