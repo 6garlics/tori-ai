@@ -14,7 +14,6 @@ from tempfile import NamedTemporaryFile
 import torch
 import torchaudio
 from audiocraft.models import MusicGen
-"""
 
 with open('secrets.json') as f:
     secrets = json.loads(f.read())
