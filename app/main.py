@@ -27,9 +27,9 @@ SECRET_KEY = secrets['aws_secret_key']
 LOCATION = secrets['aws_s3_location']
 S3_URL = f'https://{BUCKET_NAME}.s3.{LOCATION}.amazonaws.com'
 
-genre_mapping = {"모험": 'adventure',
-                "성장": 'growth',
-                "판타지": 'fantasy',
+# 나중에 클래스 속성으로 만들기
+s3_client = boto3.client(
+    's3',
 origins = [
     FRONTEND_URL,
     S3_URL
@@ -42,11 +42,22 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 장르 선택
+keyword_kor2eng = {"모험": 'adventure',
+                # "성장": 'growth',
+                # "판타지": 'fantasy',
                 # "코미디": 'comedy',
                 # "우화": 'fable',
-                "SF": 'SF',
-                "추리": 'mystery',
+                "우주": 'space opera',
+                # "바다": '',
+                "공룡": 'dinosour fiction',
+                # "전래동화": 'folktale', -> 프론트 전달: 없애기
+                "마법": 'magic realism',
+                # "신화": 'mythology' -> 프론트 전달: 없애기
+                # "추리": 'mystery',
                 # "드라마": 'drama'
+                # "스포츠": 'sports drama',
                 }
 # 장르 어떤 것 
   
@@ -70,7 +81,7 @@ class Illustration(BaseModel):
     pageNum: int = 0
 
 
-# 나중에 클래스 속성으로 만들기
+def create_title(story: str, keyword: str):
 s3_client = boto3.client(
     's3',
     aws_access_key_id=ACCESS_KEY,
@@ -86,13 +97,12 @@ s3_client = boto3.client(
 #     image_url = f'{S3_URL}/{object_name}'
 #     return image_url
 
-def create_title(story: str, genre: str):
     response = openai.ChatCompletion.create(
         model=MODEL,
         messages=[
             {"role": "system", "content": f"""The user will provide you with text delimited by triple quotes. \
-             Please make a creative title of about five words that expresses the whole story \
-             and {genre_mapping.get(genre, "판타지")} genre well in Korean."""},
+             Please make a creative and impressive title of less than five words that expresses the whole story \
+             and the meaning of the keyword \"{keyword_kor2eng.get(keyword, "마법")}\" well in Korean."""},
             {"role": "user", "content": '"""' + story +'"""'},
         ],
         temperature=0.7,
@@ -105,20 +115,24 @@ async def diary_to_story(diary: Diary):
     response = openai.ChatCompletion.create(
         model=MODEL,
         messages=[
-            {"role": "system", "content": f"""The user will provide you with text delimited by triple quotes. \
-            Please change this diary into a story of {genre_mapping.get(diary.genre, "판타지")} genre \
+            {"role": "system", "content": f'The user will provide you with text delimited by triple quotes. \
+            You change the text into a story that has the meaning of the keyword \"{keyword_kor2eng.get(diary.keyword, "마법")}\" \
             so that it is suitable for children to read and interesting to develop. \
-            The main character of this story is a girl Jenny. \
-            The story consists of more than six paragraphs consisting of about two sentences.
-            And please write it in Korean using honorifics."""},
+            The name of the main character in this story is \"{diary.name}\". \
+            The story should consist of more than six paragraphs consisting of one or two sentences. \
+            And please write it in Korean using honorifics.'},
+            # assistant role 추가
+            {"role": "user", "content": '"""오늘 밤에 자전거를 탔다. 자전거는 처음 탈 때는 좀 중심잡기가 힘들었다. 그러나 재미있었다. 자전거를 잘 타서 엄마, 아빠 산책 갈 때 나도 가야겠다."""'},
+            {"role": "assistant", "content": f'{story_template(diary.name, diary.keyword)}'},
             {"role": "user", "content": '"""' + diary.contents +'"""'},
         ],
         temperature=0.75,
+        max_tokens=2048
     )
     story = response["choices"][0]["message"]["content"] # story
-    title = create_title(story, diary.genre)
+    title = create_title(story, diary.keyword)
     texts = list(map(lambda x: x.strip("\""), story.split("\n\n")))
-    return StoryText(title=title, texts=texts)
+    return StoryTitleText(title=title, texts=texts)
 
 def prompt_to_image(prompt: str, style: Optional[str] = "digital art"):
     try:
