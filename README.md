@@ -5,9 +5,17 @@
 
 ## :white_check_mark: To Do List
 
-- [ ] 일관된 주인공 생성, 통일된 화풍 구현
-    - [X] Fine-tune Stable Diffusion using Textual Inversion  
-    - [X] Fine-tune Stable Diffusion using LoRA
-    - [ ] ~~StyleGAN + FreezeD~~
-- [X] 딥러닝 개발 환경 만들기
-- [X] ChatGPT API 프롬프트 가공으로 동화책 이야기 생성 
+### 딥러닝 서버
+- FastAPI 로 딥러닝 서버 배포
+- S3에 생성된 동화책 일러스트, 동화책 BGM 저장
+
+### 동화책 생성
+- 딥러닝 개발 환경 구축
+- 동화책 일러스트 일관된 주인공 및 화풍 구현
+  - [X] Fine-tune Stable Diffusion using Textual Inversion  
+  - [X] Fine-tune Stable Diffusion using LoRA
+  - [ ] ~~StyleGAN + FreezeD~~
+
+- MusicGen 모델로 동화책 BGM 생성
+-  LLM 모델 프롬프트 가공으로, 일기 기반 동화책 생성
+   - [X] ChatGPT
