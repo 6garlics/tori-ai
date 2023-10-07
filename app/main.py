@@ -1,33 +1,48 @@
 from fastapi import FastAPI
-import openai
+import uvicorn
 from pydantic import BaseModel
 from typing import Optional, List
 import json
 import io
 import uuid
 import requests
+import openai
 import boto3
 from botocore.exceptions import ClientError
-
-# from S3UpDownLoader import S3UpDownLoader
-from mangum import Mangum
-
-app = FastAPI()
-handler = Mangum(app)
+from fastapi.middleware.cors import CORSMiddleware
+from tempfile import NamedTemporaryFile
+import torch
+import torchaudio
+from audiocraft.models import MusicGen
+"""
 
 with open('secrets.json') as f:
     secrets = json.loads(f.read())
+
 openai.api_key = secrets['openai_api_key']
+MODEL = "gpt-3.5-turbo"
+FRONTEND_URL = secrets['frontend_url']
 BUCKET_NAME = secrets['aws_s3_bucket']
 ACCESS_KEY = secrets['aws_access_key']
 SECRET_KEY = secrets['aws_secret_key']
 LOCATION = secrets['aws_s3_location']
 S3_URL = f'https://{BUCKET_NAME}.s3.{LOCATION}.amazonaws.com'
-MODEL = "gpt-3.5-turbo"
 
 genre_mapping = {"모험": 'adventure',
                 "성장": 'growth',
                 "판타지": 'fantasy',
+origins = [
+    FRONTEND_URL,
+    S3_URL
+]
+app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
                 # "코미디": 'comedy',
                 # "우화": 'fable',
                 "SF": 'SF',
@@ -41,7 +56,7 @@ class Diary(BaseModel):
     contents: Optional[str] = ""
     genre: Optional[str] = ""
 
-class StoryText(BaseModel):
+class StoryTitleText(BaseModel):
     title: str = ""
     texts: List[str] = []
 
@@ -176,3 +191,7 @@ async def create_cover(story_text: StoryText):
     prompt = prompt_to_one_sentence(prompt)
     cover_url = prompt_to_image(prompt)
     return Cover(coverUrl=cover_url)
+
+
+# if __name__ == "__main__":
+#     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
