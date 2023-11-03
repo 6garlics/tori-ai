@@ -6,16 +6,25 @@
 ## :white_check_mark: To Do List
 
 ### 딥러닝 서버
-- FastAPI 로 딥러닝 서버 배포
-- S3에 생성된 동화책 일러스트, 동화책 BGM 저장
+
+- Tencent Cloud 배포
+  - [x] Nginx (리버스 프록시 웹서버)
+  - [x] Gunicorn (WSGI)
+  - [x] FastAPI
+  - [x] S3 (동화책 삽화 및 BGM 저장)
+  - [x] SSL 적용
 
 ### 동화책 생성
 - 딥러닝 개발 환경 구축
-- 동화책 일러스트 일관된 주인공 및 화풍 구현
-  - [X] Fine-tune Stable Diffusion using Textual Inversion  
-  - [X] Fine-tune Stable Diffusion using LoRA
-  - [ ] ~~StyleGAN + FreezeD~~
+  
+- [ ] 동화책 이야기 생성
+   - [X] ChatGPT API
+   - [ ] HyperCLOVA API
+- 동화책 삽화 생성
+  - [ ] Stable Diffusion
+    - [X] Fine-tune Stable Diffusion using Textual Inversion
+    - [X] Fine-tune Stable Diffusion using LoRA
+    - [ ] DreamStudio API
+  - [X] DALLE OpenAI API
+- [X] MusicGen 모델로 동화책 BGM 생성
 
-- MusicGen 모델로 동화책 BGM 생성
--  LLM 모델 프롬프트 가공으로, 일기 기반 동화책 생성
-   - [X] ChatGPT
