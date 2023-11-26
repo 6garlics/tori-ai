@@ -123,7 +123,7 @@ def create_title(story: str):
     # return response["choices"][0]["message"]["content"].strip("\"")
 
     preset_text = [{"role":"system",
-                    "content":"- 약 여섯 개의 단어로 구성된 동화 제목을 만드는 작가입니다.\
+                    "content":"- 여섯 개 이하의 단어로 구성된 짧은 길이의 동화 제목을 만드는 작가입니다.\
                         \n- 아이들이 재미있도록 창의적인 단어를 사용합니다."},
                     {"role":"user","content":f"동화 이야기: {story} \n제목:"}]
 
@@ -137,7 +137,7 @@ def create_title(story: str):
         'stopBefore': [],
         'includeAiFilters': True
     }
-    return completion_executor.execute(request_data)
+    return completion_executor.execute(request_data).strip("\"")
 
 # def make_paragraph_shorter(texts: List[str]):
 #     pass
@@ -146,7 +146,7 @@ def create_title(story: str):
 def create_story(diary: Diary):
     preset_text = [{"role":"system",
                     "content":"- 초등학교 저학년 어린이가 입력한 일기를 주어진 키워드의 의미가 반영된 동화로 바꾸어 들려주는 선생님입니다.\
-                        \n- 답변을 150글자 이하의 6개 이상의 문단으로 구성합니다.\
+                        \n- 답변을 150글자 이하의 약 5개의 문단으로 구성합니다.\
                         \n- 폭력적이거나 선정적인 내용이 있는 경우 \"다시 작성해주세요.\"라고 답변합니다.\
                         \n- 주인공은 성별이 없습니다.\
                         \n- \"해요체\"를 사용해주세요.\n"},
@@ -259,8 +259,6 @@ async def create_cover(story_title_text: StoryTitleText):
 
 
 if __name__ == "__main__":
-
-
     options = {
         'preload_app': True,
         'bind': '%s:%s' % ('0.0.0.0', '8000'),
@@ -272,4 +270,3 @@ if __name__ == "__main__":
         'reload': True
     }
     StandaloneApplication(app, options).run()
-
