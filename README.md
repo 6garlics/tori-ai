@@ -33,7 +33,7 @@
 # Settings
 
 ```bash
-git clone https://github.com/6garlics/be-my-story-ai.git
-cd be-my-story-ai
+git clone https://github.com/6garlics/tori-ai.git
+cd tori-ai
 pip install -r requirements.txt
 ```
