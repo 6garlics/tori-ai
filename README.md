@@ -19,7 +19,7 @@
   
 - [ ] 동화책 이야기 생성
    - [X] ChatGPT API
-   - [ ] HyperCLOVA API
+   - [X] HyperCLOVA API
 - 동화책 삽화 생성
   - [ ] Stable Diffusion
     - [X] Fine-tune Stable Diffusion using Textual Inversion
@@ -28,3 +28,11 @@
   - [X] DALLE OpenAI API
 - [X] MusicGen 모델로 동화책 BGM 생성
 
+
+# Settings
+
+```bash
+git clone https://github.com/6garlics/be-my-story-ai.git
+cd be-my-story-ai
+pip install -r requirements.txt
+```
