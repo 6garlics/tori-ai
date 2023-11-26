@@ -6,7 +6,7 @@
 ## ⚒️ 시스템 구조
 ### 전체 시스템 구조
 
-![tori overall system architecture](https://github.com/6garlics/tori-ai/assets/69978041/d5313b3f-2c80-47a7-9afc-10cc74905607)
+![토리 전체 시스템구조 v2](https://github.com/6garlics/tori-ai/assets/69978041/9406890f-3971-44f0-883e-07d7428b7c7a)
 
 ### AI 시스템 구조
 
