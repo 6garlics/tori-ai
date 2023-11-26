@@ -3,7 +3,6 @@ import uvicorn
 from pydantic import BaseModel
 from typing import Optional, List
 import json
-import io
 import uuid
 import openai
 import boto3
@@ -11,16 +10,14 @@ from botocore.exceptions import ClientError
 from tempfile import NamedTemporaryFile
 import torch
 import torchaudio
-import sys
 import gc
-# sys.path.append("/home/ubuntu/be-my-story-ai/audiocraft")
 from audiocraft.models import MusicGen
 
 model = MusicGen.get_pretrained('facebook/musicgen-small', device=torch.device("cuda"))
 model.set_generation_params(
     use_sampling=True,
     top_k=250,
-    duration=30 # default 30
+    duration=30
 )
 
 with open('secrets.json') as f:

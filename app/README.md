@@ -6,7 +6,12 @@
     python gunicorn_deploy.py
     ```
 
-3. 다시 실행할 때 남아 있는 프로세스 kill
+3. uvicorn으로만 fastapi 배포 (`${PROJECT_ROOT}/app` 위치에서 실행)
+    ```bash
+    nohuup python uvicorn_deploy.py
+    ```
+
+4. 다시 실행할 때 남아 있는 프로세스 kill
     ```bash
     kill -9 $(lsof -i:8000 -t) 2>/dev/null
     ```
