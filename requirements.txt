@@ -1,9 +1,9 @@
-fastapi
-uvicorn[standard]
-boto3
-openai
-gunicorn
-matplotlib
+fastapi==0.103.2
+uvicorn[standard]==0.23.2
+boto3==1.28.63
+openai==0.28.1
+gunicorn==21.2.0
+matplotlib==3.7.3
 torch>=2.0
-requests
--e git+https://git@github.com/facebookresearch/audiocraft#egg=audiocraft
+requests==2.22.0
+-e git+https://git@github.com/facebookresearch/audiocraft#egg=audiocraft@v1.1.0
