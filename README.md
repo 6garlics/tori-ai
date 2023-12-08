@@ -20,11 +20,19 @@
 
 ## 🏠 Code Structure
 > - [app](https://github.com/6garlics/tori-ai/tree/main/app): Directory for deploy fastapi applications  
-> - app/illustration_deploy.py: Module for creating an illustration for each paragraph of a story using using DALLE  
-> - app/hyperclova_deploy.py: Module for creating a story based on a child's diary using HyperCLOVA X  
-> - app/music_deploy.py : Module for creating an music based on a storybook using MusicGen.  
+> - [app/illustration_deploy.py](https://github.com/6garlics/tori-ai/blob/main/app/illustration_deploy.py): Module for creating an illustration for each paragraph of a story using using DALLE  
+> - [app/hyperclova_deploy.py](https://github.com/6garlics/tori-ai/blob/main/app/hyperclova_deploy.py): Module for creating a story based on a child's diary using HyperCLOVA X  
+> - [app/music_deploy.py](https://github.com/6garlics/tori-ai/blob/main/app/music_deploy.py) : Module for creating an music based on a storybook using MusicGen.  
 > - [nginx](https://github.com/6garlics/tori-ai/tree/main/nginx) : Directory for nginx  
 > - [textual_inversion_project](https://github.com/6garlics/tori-ai/tree/main/textual_inversion_project): Directory for experiments on Stable Diffusion  
+
+## Server
+
+> Ubuntu Server 20.04 LTS 64bit
+> GPU: Tesla T4
+> Nvidia Driver 535.129.03
+> CUDA 12.2
+> python 3.8
 
 ## ⚙️ Settings
 
