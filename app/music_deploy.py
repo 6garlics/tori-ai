@@ -3,6 +3,7 @@ import uvicorn
 from pydantic import BaseModel
 from typing import Optional, List
 import json
+import io
 import uuid
 import openai
 import boto3
@@ -10,16 +11,20 @@ from botocore.exceptions import ClientError
 from tempfile import NamedTemporaryFile
 import torch
 import torchaudio
+import sys
 import gc
+# sys.path.append("/home/ubuntu/be-my-story-ai/audiocraft")
 from audiocraft.models import MusicGen
+import random
 
 model = MusicGen.get_pretrained('facebook/musicgen-small', device=torch.device("cuda"))
 model.set_generation_params(
     use_sampling=True,
     top_k=250,
-    duration=30
+    duration=30 # default 30
 )
 
+object_names = ["3a7da0a4-7ff7-11ee-a704-7b2ff80a7a30.wav", "4e121528-895c-11ee-a705-7b2ff80a7a30.wav", "9be438ce-82f6-11ee-a704-7b2ff80a7a30.wav", "53b29844-8962-11ee-a705-7b2ff80a7a30.wav", "443c52de-896b-11ee-a705-7b2ff80a7a30.wav", "2684fb8c-8962-11ee-a705-7b2ff80a7a30.wav", "ac5ffad0-8440-11ee-a705-7b2ff80a7a30.wav", "af9b8392-896b-11ee-a705-7b2ff80a7a30.wav", "b521c298-82f1-11ee-a704-7b2ff80a7a30.wav"]
 with open('secrets.json') as f:
     secrets = json.loads(f.read())
 
@@ -102,11 +107,22 @@ def prompt_to_music(prompt, sample_rate=32000):
     music_url = f"{S3_URL}/{object_name}"
     return music_url
 
+# delete for temporary
+# @app.post("/music")
+# async def story_to_music(story_text: StoryText):
+#     texts = "\n".join(story_text.texts)
+#     prompt = story_to_music_prompt(texts)
+#     music_url = prompt_to_music(prompt)
+#     return Music(musicUrl=music_url)
+
 @app.post("/music")
 async def story_to_music(story_text: StoryText):
-    texts = "\n".join(story_text.texts)
-    prompt = story_to_music_prompt(texts)
-    music_url = prompt_to_music(prompt)
+    # texts = "\n".join(story_text.texts)
+    # prompt = story_to_music_prompt(texts)
+    # music_url = prompt_to_music(prompt)
+
+    idx = random.randrange(0, 9)
+    music_url = f"{S3_URL}/{object_names[idx]}"
     return Music(musicUrl=music_url)
 
 if __name__ == "__main__":
