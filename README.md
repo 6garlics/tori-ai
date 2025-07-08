@@ -1,30 +1,33 @@
 # Tori
 
-세상에 없던 나만의 동화책 **토리**의 AI 개발을 위한 레파지토리입니다.  
-**토리**는 아동이 일기를 작성하면 생성형 AI를 통해 만들어진 동화책을 친구들과 공유해 볼 수 있는 플랫폼입니다.
+**Tori** is a repository for building an AI system that creates personalized fairytale books like never before.  
+Tori is a platform where children can write diaries and generate unique storybooks using generative AI, which they can then share with friends.
 
-🔗 Website Address: [https://tori-fairytale.vercel.app/](https://tori-fairytale.vercel.app/) (ID: test, PW: a1234567!)
+🔗 Website Address: [https://tori-fairytale.vercel.app/](https://tori-fairytale.vercel.app/)  
+(ID: test, PW: a1234567!)
 
 ## ⚒️ System Architecture
 
 ### ⛏️ Overall System Architecture
 
-![토리 전체 시스템구조 v2](https://github.com/6garlics/tori-ai/assets/69978041/9406890f-3971-44f0-883e-07d7428b7c7a)
+![Tori Overall System Architecture v2](https://github.com/6garlics/tori-ai/assets/69978041/9406890f-3971-44f0-883e-07d7428b7c7a)
 
 ### 🔨 AI System Architecture
 
-![tori ai system architecture](https://github.com/6garlics/tori-ai/assets/69978041/2da54178-40f3-4e6b-814d-0368152db500)
+![Tori AI System Architecture](https://github.com/6garlics/tori-ai/assets/69978041/2da54178-40f3-4e6b-814d-0368152db500)
 
-## 💫 How a Story Book is created
-![동화책 생성 흐름](https://github.com/6garlics/tori-ai/assets/69978041/7084f5e9-7dbe-460b-b9c6-ec566b97c442)
+## 💫 How a Story Book is Created
+
+![Storybook Generation Flow](https://github.com/6garlics/tori-ai/assets/69978041/7084f5e9-7dbe-460b-b9c6-ec566b97c442)
 
 ## 🏠 Code Structure
-> - [app](https://github.com/6garlics/tori-ai/tree/main/app): Directory for deploy fastapi applications  
->   - [app/illustration_deploy.py](https://github.com/6garlics/tori-ai/blob/main/app/illustration_deploy.py): Module for creating an illustration for each paragraph of a story using DALLE  
->   - [app/hyperclova_deploy.py](https://github.com/6garlics/tori-ai/blob/main/app/hyperclova_deploy.py): Module for creating a story based on a child's diary using HyperCLOVA X  
->   - [app/music_deploy.py](https://github.com/6garlics/tori-ai/blob/main/app/music_deploy.py) : Module for creating an music based on a storybook using MusicGen  
-> - [nginx](https://github.com/6garlics/tori-ai/tree/main/nginx) : Directory for nginx  
-> - [textual_inversion_project](https://github.com/6garlics/tori-ai/tree/main/textual_inversion_project): Directory for experiments on Stable Diffusion  
+
+> - [app](https://github.com/6garlics/tori-ai/tree/main/app): Directory for FastAPI applications  
+>   - [app/illustration_deploy.py](https://github.com/6garlics/tori-ai/blob/main/app/illustration_deploy.py): Generates illustrations for each paragraph using DALL·E  
+>   - [app/hyperclova_deploy.py](https://github.com/6garlics/tori-ai/blob/main/app/hyperclova_deploy.py): Generates stories from children's diaries using HyperCLOVA X  
+>   - [app/music_deploy.py](https://github.com/6garlics/tori-ai/blob/main/app/music_deploy.py): Generates background music from the storybook using MusicGen  
+> - [nginx](https://github.com/6garlics/tori-ai/tree/main/nginx): Nginx configuration files  
+> - [textual_inversion_project](https://github.com/6garlics/tori-ai/tree/main/textual_inversion_project): Experiments with Stable Diffusion
 
 ## 💻 Server
 
@@ -32,9 +35,9 @@
 > GPU: Tesla T4  
 > Nvidia Driver 535.129.03  
 > CUDA 12.2  
-> python 3.8  
+> Python 3.8  
 
-## ⚙️ Settings
+## ⚙️ Setup
 
 ```bash
 git clone https://github.com/6garlics/tori-ai.git
@@ -44,8 +47,8 @@ pip install -r requirements.txt
 
 ## 🚀 Deploy
 
-1. Nginx로 Reverse Proxy 설정
-- nginx 설치
+1. Set up Reverse Proxy with Nginx
+- Install Nginx:
   ```bash
   sudo apt update
   sudo apt upgrade
@@ -54,24 +57,24 @@ pip install -r requirements.txt
   sudo apt install nginx
   ```
 
-- nginx.conf 파일 수정
+- Replace nginx.conf:
   ```bash
   sudo cp ${PROJECT_ROOT}/nginx/nginx.conf /etc/nginx/nginx.conf
   ```
-- nginx 실행
+- Run Nginx:
   ```bash
   sudo nginx -t
   sudo systemctl start nginx
   ```
 
-2. `${PROJECT_ROOT}/app/secrets.json` 파일에 credential key, url을 설정한다.
+2. `Configure `secrets.json` with credentials and URLs in `${PROJECT_ROOT}/app`.
 
-3. gunicorn으로 fastapi 배포 (`${PROJECT_ROOT}/app` 위치에서 실행)
+3. Deploy FastAPI via Gunicorn (run from `${PROJECT_ROOT}/app`):
     ```bash
     python illustration_deploy.py
     ```
 
-4. uvicorn으로만 fastapi 배포 (`${PROJECT_ROOT}/app` 위치에서 실행)
+4. Deploy FastAPI via Uvicorn:
     ```bash
     nohup python hyperclova_deploy.py
     ```
@@ -80,34 +83,34 @@ pip install -r requirements.txt
     nohup python music_deploy.py
     ```
 
-5. 다시 실행할 때 남아 있는 프로세스 kill
+5. To kill a running process on the same port:
     ```bash
     kill -9 $(lsof -i:${PORT} -t) 2>/dev/null
     ```
 
 ## ✅ What I did
 
-### 딥러닝 서버
+### Deep Learning Server
 
-- [X] Tencent Cloud 배포
-  - [x] Nginx (리버스 프록시 웹서버)
-  - [x] SSL 적용
+- [X] Deployed on Tencent Cloud
+  - [x] Nginx (Reverse Proxy Web Server)
+  - [x] SSL Configuration
   - [x] Gunicorn (WSGI)
   - [x] FastAPI
-  - [x] S3 연결 (동화책 삽화 및 BGM 저장)
-  - [X] OpenAI API 연결
-  - [X] Naver HyperClova X API 연결
+  - [x] S3 Integration (store storybook illustrations and BGM)
+  - [X] Integrated OpenAI API
+  - [X] Integrated Naver HyperCLOVA X API
 
-### 동화책 생성
+### Automated Storybook Generation
   
-- [X] GPU 서버 구축
-- [X] 동화책 이야기 생성
+- [X] Built GPU Server
+- [X] Story Generation
   - [X] ChatGPT API
   - [X] HyperCLOVA API
-- [X] 동화책 삽화 생성
+- [X] Illustration Generation
   - [X] DALLE OpenAI API
   - [ ] ~~Stable Diffusion (취소)~~
     - [X] Fine-tune Stable Diffusion using Textual Inversion
     - [X] Fine-tune Stable Diffusion using LoRA
     - [ ] ~~DreamStudio API~~
-- [X] MusicGen 모델로 동화책 배경음악 생성
+- [X] Generated background music using MusicGen
