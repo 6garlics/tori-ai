@@ -4,8 +4,8 @@
 Children can write daily diary entries, transform them into unique storybooks using generative AI, and share them with friends.
 
 🔗 **Live Website**: https://tori-fairytale.vercel.app/  
-(ID: `test` / PW: `a1234567!`)
-**Note:** The live prototype website is no longer active, but the full backend (story, illustration, music generation) can be run locally using FastAPI.
+(ID: `test` / PW: `a1234567!`)  
+**Note:** The live prototype (2023) is no longer hosted; the full pipeline can be reproduced locally using this repository.
 
 ---
 
