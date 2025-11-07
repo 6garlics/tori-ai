@@ -1,43 +1,81 @@
-# Tori
+# Tori — AI-Powered Personalized Fairytale Generation
 
-**Tori** is a repository for building an AI system that creates personalized fairytale books like never before.  
-Tori is a platform where children can write diaries and generate unique storybooks using generative AI, which they can then share with friends.
+**Tori** is an AI system that turns a child’s diary into a personalized fairytale book — complete with story, illustrations, and background music.  
+Children can write daily diary entries, transform them into unique storybooks using generative AI, and share them with friends.
 
-🔗 Website Address: [https://tori-fairytale.vercel.app/](https://tori-fairytale.vercel.app/)  
-(ID: test, PW: a1234567!)
+🔗 **Live Website**: https://tori-fairytale.vercel.app/  
+(ID: `test` / PW: `a1234567!`)
+**Note:** The live prototype website is no longer active, but the full backend (story, illustration, music generation) can be run locally using FastAPI.
+
+---
+
+## 🌟 Key Features
+
+✅ Converts children’s diary entries into full fairytale stories  
+✅ Generates AI illustrations for every paragraph  
+✅ Produces background music aligned with story mood  
+✅ Web platform to read and share storybooks  
+✅ Entire system deployed on cloud GPU server
+
+---
 
 ## ⚒️ System Architecture
 
-### ⛏️ Overall System Architecture
+### ✅ Overall System
 
-![Tori Overall System Architecture v2](https://github.com/6garlics/tori-ai/assets/69978041/9406890f-3971-44f0-883e-07d7428b7c7a)
+<p align="center">
+  <img src="https://github.com/6garlics/tori-ai/assets/69978041/9406890f-3971-44f0-883e-07d7428b7c7a" width="70%">
+</p>
 
-### 🔨 AI System Architecture
+### ✅ AI Pipeline
 
-![Tori AI System Architecture](https://github.com/6garlics/tori-ai/assets/69978041/2da54178-40f3-4e6b-814d-0368152db500)
+<p align="center">
+  <img src="https://github.com/6garlics/tori-ai/assets/69978041/2da54178-40f3-4e6b-814d-0368152db500" width="70%">
+</p>
 
-## 💫 How a Story Book is Created
+---
 
-![Storybook Generation Flow](https://github.com/6garlics/tori-ai/assets/69978041/7084f5e9-7dbe-460b-b9c6-ec566b97c442)
+## 📘 How a Storybook is Created
 
-## 🏠 Code Structure
+<p align="center">
+  <img src="https://github.com/6garlics/tori-ai/assets/69978041/7084f5e9-7dbe-460b-b9c6-ec566b97c442" width="70%">
+</p>
 
-> - [app](https://github.com/6garlics/tori-ai/tree/main/app): Directory for FastAPI applications  
->   - [app/illustration_deploy.py](https://github.com/6garlics/tori-ai/blob/main/app/illustration_deploy.py): Generates illustrations for each paragraph using DALL·E  
->   - [app/hyperclova_deploy.py](https://github.com/6garlics/tori-ai/blob/main/app/hyperclova_deploy.py): Generates stories from children's diaries using HyperCLOVA X  
->   - [app/music_deploy.py](https://github.com/6garlics/tori-ai/blob/main/app/music_deploy.py): Generates background music from the storybook using MusicGen  
-> - [nginx](https://github.com/6garlics/tori-ai/tree/main/nginx): Nginx configuration files  
-> - [textual_inversion_project](https://github.com/6garlics/tori-ai/tree/main/textual_inversion_project): Experiments with Stable Diffusion
+1. Child writes a diary on the web platform  
+2. HyperCLOVA X / ChatGPT generates the full fairytale narrative  
+3. Each paragraph is sent to DALL·E to generate illustrations  
+4. MusicGen produces a custom BGM based on story context  
+5. The final book is displayed on the website and shared
 
-## 💻 Server
+---
 
-> Ubuntu Server 20.04 LTS 64bit  
-> GPU: Tesla T4  
-> Nvidia Driver 535.129.03  
-> CUDA 12.2  
-> Python 3.8  
+## 🏗 Code Structure
 
-## ⚙️ Setup
+```
+tori-ai/
+├── app/                     # FastAPI services
+│   ├── illustration_deploy.py   # DALL·E illustration generation
+│   ├── hyperclova_deploy.py     # Story generation (HyperCLOVA X)
+│   └── music_deploy.py          # MusicGen BGM generation
+├── nginx/                   # Reverse proxy configuration
+└── textual_inversion_project/   # SD experiments (LoRA, Textual Inversion)
+```
+
+---
+
+## 💻 GPU Server Environment
+
+- **Ubuntu 20.04 LTS (64-bit)**
+- **GPU:** Tesla T4
+- Nvidia Driver 535.129.03
+- CUDA 12.2
+- Python 3.8
+- FastAPI + Gunicorn + Nginx
+- S3 bucket for storing generated images / BGM
+
+---
+
+## ⚙️ Installation
 
 ```bash
 git clone https://github.com/6garlics/tori-ai.git
@@ -45,72 +83,93 @@ cd tori-ai
 pip install -r requirements.txt
 ```
 
-## 🚀 Deploy
+---
 
-1. Set up Reverse Proxy with Nginx
-- Install Nginx:
-  ```bash
-  sudo apt update
-  sudo apt upgrade
-  sudo apt autoremove
+## 🚀 Deployment Guide
 
-  sudo apt install nginx
-  ```
+### ✅ 1. Set up Reverse Proxy (Nginx)
 
-- Replace nginx.conf:
-  ```bash
-  sudo cp ${PROJECT_ROOT}/nginx/nginx.conf /etc/nginx/nginx.conf
-  ```
-- Run Nginx:
-  ```bash
-  sudo nginx -t
-  sudo systemctl start nginx
-  ```
+```bash
+sudo apt update && sudo apt upgrade
+sudo apt autoremove
+sudo apt install nginx
+sudo cp ${PROJECT_ROOT}/nginx/nginx.conf /etc/nginx/nginx.conf
 
-2. `Configure `secrets.json` with credentials and URLs in `${PROJECT_ROOT}/app`.
+sudo nginx -t
+sudo systemctl start nginx
+```
 
-3. Deploy FastAPI via Gunicorn (run from `${PROJECT_ROOT}/app`):
-    ```bash
-    python illustration_deploy.py
-    ```
+### ✅ 2. Configure Secrets
 
-4. Deploy FastAPI via Uvicorn:
-    ```bash
-    nohup python hyperclova_deploy.py
-    ```
+Create `secrets.json` in `${PROJECT_ROOT}/app` with OpenAI, HyperCLOVA, S3 keys, endpoints, etc.
 
-    ```bash
-    nohup python music_deploy.py
-    ```
+### ✅ 3. Run FastAPI Services
 
-5. To kill a running process on the same port:
-    ```bash
-    kill -9 $(lsof -i:${PORT} -t) 2>/dev/null
-    ```
+```bash
+# Illustration service
+python app/illustration_deploy.py
+```
 
-## ✅ What I did
+```bash
+# Story generation service
+nohup python app/hyperclova_deploy.py &
+```
 
-### Deep Learning Server
+```bash
+# Music generation service
+nohup python app/music_deploy.py &
+```
 
-- [X] Deployed on Tencent Cloud
-  - [x] Nginx (Reverse Proxy Web Server)
-  - [x] SSL Configuration
-  - [x] Gunicorn (WSGI)
-  - [x] FastAPI
-  - [x] S3 Integration (store storybook illustrations and BGM)
-  - [X] Integrated OpenAI API
-  - [X] Integrated Naver HyperCLOVA X API
+### ✅ 4. Kill active process on port (if needed)
 
-### Automated Storybook Generation
-  
-- [X] Built GPU Server
-- [X] Story Generation
-  - [X] ChatGPT API
-  - [X] HyperCLOVA API
-- [X] Illustration Generation
-  - [X] DALLE OpenAI API
-  - [ ] ~~Stable Diffusion (취소)~~
-    - [X] Fine-tune Stable Diffusion using Textual Inversion
-    - [X] Fine-tune Stable Diffusion using LoRA
-    - [ ] ~~DreamStudio API~~
-- [X] Generated background music using MusicGen
+```bash
+kill -9 $(lsof -i:${PORT} -t) 2>/dev/null
+```
+
+---
+
+## ✅ What I Built
+
+### 🔹 Cloud GPU Server & Backend Deployment
+- Provisioned on Tencent Cloud
+- Nginx reverse proxy with HTTPS (SSL enabled)
+- Gunicorn + FastAPI backend
+- Integrated S3 for media storage
+- Connected OpenAI API (ChatGPT, DALL·E)
+- Integrated HyperCLOVA X API for Korean storytelling
+
+### 🔹 Automated Storybook Generation Pipeline
+- Story generation from children’s diaries
+- Illustration generation using DALL·E
+- BGM generation with MusicGen
+- Fully automated workflow from diary → illustrated fairytale → sharable book
+
+### 🔹 Stable Diffusion Experiments (R&D)
+- Fine-tuned Stable Diffusion using Textual Inversion
+- Fine-tuned Stable Diffusion using LoRA
+- (Later deprecated in production in favor of DALL·E)
+
+---
+
+## ✅ Tech Stack
+
+| Component | Technology |
+|----------|-------------|
+| Backend | FastAPI, Gunicorn, Python |
+| Model APIs | HyperCLOVA X, ChatGPT, DALL·E, MusicGen |
+| Deployment | Tencent Cloud GPU, Nginx, SSL |
+| Storage | S3-compatible object storage |
+| Experiments | Stable Diffusion + LoRA + Textual Inversion |
+
+---
+
+## 📌 Future Improvements
+- Style-consistent character generation across pages  
+- Inference speed optimization on GPU  
+- Add multilingual diary → storybook support  
+- Real-time audiobook narration
+
+---
+
+## 📬 Contact
+For collaboration or demo requests: **sijeongkim.dev@gmail.com**
