@@ -169,7 +169,3 @@ kill -9 $(lsof -i:${PORT} -t) 2>/dev/null
 - Add multilingual diary → storybook support  
 - Real-time audiobook narration
 
----
-
-## 📬 Contact
-For collaboration or demo requests: **sijeongkim.dev@gmail.com**
